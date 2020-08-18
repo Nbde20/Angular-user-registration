@@ -1,0 +1,12 @@
+FROM node:current-alpine3.10 as build-step
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm install @angular-devkit/build-angular
+RUN npm update
+RUN npm run build_dkr
+RUN ls -l /app/dist/user-registration-client
+
+FROM nginx:1.19.0-alpine as prod-stage
+COPY --from=build-step /app/dist/user-registration-client /usr/share/nginx/html
+EXPOSE 80
